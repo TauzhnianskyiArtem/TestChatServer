@@ -1,5 +1,6 @@
 package main;
 
+import account.AccountService;
 import chat.WebSocketChatServlet;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -7,14 +8,20 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import servlets.SessionsServlet;
+import servlets.UsersServlet;
 
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        Server server = new Server(8080);
+        Server server = new Server(4084);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
+        AccountService accountService = new AccountService();
+
         context.addServlet(new ServletHolder(new WebSocketChatServlet()), "/chat");
+        context.addServlet(new ServletHolder(new UsersServlet(accountService)), "/signup");
+        context.addServlet(new ServletHolder(new SessionsServlet(accountService)), "/signin");
 
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(true);
