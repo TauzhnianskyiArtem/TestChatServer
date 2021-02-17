@@ -1,6 +1,8 @@
 package servlets;
 
 import account.AccountService;
+import account.AccountServiceImp;
+import dbService.dataSets.UsersDataSet;
 import templater.PageGenerator;
 
 import javax.servlet.ServletException;
@@ -15,26 +17,10 @@ import java.util.Map;
 public class SessionsServlet extends HttpServlet {
     private final AccountService accountService;
 
-    public SessionsServlet(AccountService accountService) {
+    public SessionsServlet(AccountServiceImp accountService) {
         this.accountService = accountService;
     }
 
-    //get logged user profile
-    public void doGet(HttpServletRequest request,
-                      HttpServletResponse response) throws ServletException, IOException {
-        String login = request.getParameter("login");
-        String sessionId = request.getSession().getId();
-        boolean correctSessionId = accountService.isCorrectUsersBySessionId(sessionId);
-        if (correctSessionId) {
-            response.setContentType("text/html;charset=utf-8");
-            response.getWriter().println("Unauthorized");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        } else {
-            response.setContentType("text/html;charset=utf-8");
-            response.getWriter().println("Authorized: " + login);
-            response.setStatus(HttpServletResponse.SC_OK);
-        }
-    }
 
     //sign in
     public void doPost(HttpServletRequest request,
@@ -48,10 +34,9 @@ public class SessionsServlet extends HttpServlet {
             return;
         }
 
-        boolean correctUsersByLogin = false;
-        correctUsersByLogin = accountService.isCorrectUsersByLogin(login, pass);
+        UsersDataSet profile = accountService.getUserByLogin(login);
 
-        if (!correctUsersByLogin) {
+        if (profile == null && !profile.getPassword().equals(pass)) {
             response.setContentType("text/html;charset=utf-8");
             System.out.println("Status code (401)");
             response.getWriter().println("Unauthorized");
@@ -64,20 +49,4 @@ public class SessionsServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
-    //sign out
-    public void doDelete(HttpServletRequest request,
-                         HttpServletResponse response) throws ServletException, IOException {
-        String sessionId = request.getSession().getId();
-        boolean correctSession = accountService.isCorrectUsersBySessionId(sessionId);
-        if (correctSession) {
-            response.setContentType("text/html;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        } else {
-            //accountService.deleteSession(sessionId);
-            response.setContentType("text/html;charset=utf-8");
-            response.getWriter().println("Goodbye!");
-            response.setStatus(HttpServletResponse.SC_OK);
-        }
-
-    }
 }

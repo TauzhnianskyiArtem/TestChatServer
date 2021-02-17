@@ -1,6 +1,6 @@
 package main;
 
-import account.AccountService;
+import account.AccountServiceImp;
 import chat.WebSocketChatServlet;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -17,11 +17,11 @@ public class Main {
         Server server = new Server(4084);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
-        AccountService accountService = new AccountService();
+        AccountServiceImp accountServiceImp = new AccountServiceImp();
 
         context.addServlet(new ServletHolder(new WebSocketChatServlet()), "/chat");
-        context.addServlet(new ServletHolder(new UsersServlet(accountService)), "/signup");
-        context.addServlet(new ServletHolder(new SessionsServlet(accountService)), "/signin");
+        context.addServlet(new ServletHolder(new UsersServlet(accountServiceImp)), "/signup");
+        context.addServlet(new ServletHolder(new SessionsServlet(accountServiceImp)), "/signin");
 
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(true);

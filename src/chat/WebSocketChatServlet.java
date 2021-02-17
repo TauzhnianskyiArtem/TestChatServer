@@ -11,7 +11,7 @@ public class WebSocketChatServlet extends WebSocketServlet {
     private final static int LOGOUT_TIME = 10 * 60 * 1000;
     private ChatService chatService;
     public WebSocketChatServlet() {
-        chatService = new ChatService();
+        chatService = new ChatServiceImp();
     }
 
     @Override

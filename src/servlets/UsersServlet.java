@@ -1,7 +1,7 @@
 package servlets;
 
 import account.AccountService;
-import dbService.DBException;
+import account.AccountServiceImp;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,7 +13,7 @@ import java.io.IOException;
 public class UsersServlet extends HttpServlet {
     private final AccountService accountService;
 
-    public UsersServlet(AccountService accountService) {
+    public UsersServlet(AccountServiceImp accountService) {
         this.accountService = accountService;
     }
 
@@ -28,8 +28,7 @@ public class UsersServlet extends HttpServlet {
             return;
         }
 
-            accountService.addNewUser( login, password);
-
+        accountService.addNewUser( login, password);
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
     }
