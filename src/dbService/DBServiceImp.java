@@ -39,15 +39,15 @@ public class DBServiceImp implements DBService {
 
 
     public UsersDataSet getUser(long id) throws DBException {
+        try {
             Session session = sessionFactory.openSession();
-            try {
-                UsersDAO dao = new UsersDAO(session);
-                UsersDataSet dataSet = dao.get(id);
-                session.close();
-                return dataSet;
-            } catch (HibernateException e) {
-                throw new DBException(e);
-            }
+            UsersDAO dao = new UsersDAO(session);
+            UsersDataSet dataSet = dao.get(id);
+            session.close();
+            return dataSet;
+        } catch (HibernateException e) {
+            throw new DBException(e);
+        }
     }
 
     public UsersDataSet getUserByLogin(String login) throws DBException {
@@ -65,16 +65,12 @@ public class DBServiceImp implements DBService {
     public long addUser(String login, String password) throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            try {
-                Transaction transaction = session.beginTransaction();
-                UsersDAO dao = new UsersDAO(session);
-                long id = dao.insertUser(login, password);
-                transaction.commit();
-                session.close();
-                return id;
-            } catch (HibernateException e) {
-                throw new DBException(e);
-            }
+            Transaction transaction = session.beginTransaction();
+            UsersDAO dao = new UsersDAO(session);
+            long id = dao.insertUser(login, password);
+            transaction.commit();
+            session.close();
+            return id;
         } catch (HibernateException e) {
             throw new DBException(e);
         }
