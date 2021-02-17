@@ -53,14 +53,10 @@ public class DBService {
     public UsersDataSet getUserByLogin(String login) throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            try {
-                UsersDAO dao = new UsersDAO(session);
-                UsersDataSet dataSet = dao.getUserByLogin(login);
-                session.close();
-                return dataSet;
-            } catch (HibernateException e) {
-                throw new DBException(e);
-            }
+            UsersDAO dao = new UsersDAO(session);
+            UsersDataSet dataSet = dao.getUserByLogin(login);
+            session.close();
+            return dataSet;
         } catch(HibernateException e) {
             throw new DBException(e);
         }
