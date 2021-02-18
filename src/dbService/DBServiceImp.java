@@ -41,10 +41,15 @@ public class DBServiceImp implements DBService {
     public UsersDataSet getUser(long id) throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            UsersDAO dao = new UsersDAO(session);
-            UsersDataSet dataSet = dao.get(id);
-            session.close();
-            return dataSet;
+            try {
+                UsersDAO dao = new UsersDAO(session);
+                UsersDataSet dataSet = dao.get(id);
+                return dataSet;
+            } catch (HibernateException e) {
+                throw new DBException(e);
+            } finally {
+                session.close();
+            }
         } catch (HibernateException e) {
             throw new DBException(e);
         }
@@ -53,11 +58,16 @@ public class DBServiceImp implements DBService {
     public UsersDataSet getUserByLogin(String login) throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            UsersDAO dao = new UsersDAO(session);
-            UsersDataSet dataSet = dao.getUserByLogin(login);
-            session.close();
-            return dataSet;
-        } catch(HibernateException e) {
+            try {
+                UsersDAO dao = new UsersDAO(session);
+                UsersDataSet dataSet = dao.getUserByLogin(login);
+                return dataSet;
+            } catch (HibernateException e) {
+                throw new DBException(e);
+            } finally {
+                session.close();
+            }
+        } catch (HibernateException e) {
             throw new DBException(e);
         }
     }
@@ -65,12 +75,15 @@ public class DBServiceImp implements DBService {
     public long addUser(String login, String password) throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            Transaction transaction = session.beginTransaction();
-            UsersDAO dao = new UsersDAO(session);
-            long id = dao.insertUser(login, password);
-            transaction.commit();
-            session.close();
-            return id;
+            try {
+                Transaction transaction = session.beginTransaction();
+                UsersDAO dao = new UsersDAO(session);
+                long id = dao.insertUser(login, password);
+                transaction.commit();
+                return id;
+            } catch (HibernateException e) {
+                throw new DBException(e);
+            }
         } catch (HibernateException e) {
             throw new DBException(e);
         }
